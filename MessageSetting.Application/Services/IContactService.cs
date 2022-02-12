@@ -14,6 +14,7 @@ namespace MessageSetting.Application.Services
         //public Task<Contact> FindByIdAsync(long id); 
         //public Task DeleteAsync(Contact entity);
         public Task<IEnumerable<Contact>> GetAsync();
-
+        public Task<IEnumerable<Contact>> GetAllWithChildAsync();
+        public Task UpdateRangeAsync(IList<Contact> contacts);
     }
 }

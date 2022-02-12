@@ -10,19 +10,19 @@ namespace MessageSetting.Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _cuserRepository;
+        private readonly IUserRepository _userRepository;
         public UserService(IUserRepository userRepository)
         {
-            _cuserRepository = userRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<User> SaveAsync(User entity)
         {
-            return await _cuserRepository.AddAsync(entity);
+            return await _userRepository.AddAsync(entity);
         }
         public async Task<IEnumerable<User>> GetAsync()
         {
-            return await _cuserRepository.GetAllAsync();
+            return await _userRepository.GetAllAsync();
         }
 
     }

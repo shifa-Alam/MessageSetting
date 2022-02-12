@@ -37,6 +37,21 @@ namespace MessageSetting.Application.Services
             }
         }
 
+
+        public async Task UpdateRangeAsync(IList<Contact> contacts)
+        {
+            try
+            {
+                _repo.UpdateRangeAsync(contacts);
+                _ = _repo.SaveChanges();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         //public async Task UpdateAsync(Contact entity)
         //{
         //    await _contactRepository.UpdateAsync(entity);
@@ -55,6 +70,11 @@ namespace MessageSetting.Application.Services
 
             return await _repo.GetAllAsync();
 
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllWithChildAsync()
+        {
+            return _repo.GetAllWithChild();
         }
     }
 }

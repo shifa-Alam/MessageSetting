@@ -4,10 +4,14 @@ using MessageSetting.Infra.Data;
 using MessageSetting.Infra.Repositories;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MessageSettingDB");
 
 // Add services to the container.
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IContactUserRepository, ContactUserRepository>();
@@ -22,27 +26,19 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
     builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddDefaultPolicy(
-
-//        builder =>
-//        {
-//            builder.AllowAnyHeader();
-//            builder.AllowAnyOrigin();
-//            builder.AllowAnyMethod();
-//        });
-//});
-
 
 
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddDbContext<MessageSettingDbContext>(
-    m => m.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+    m => m.UseLazyLoadingProxies().UseSqlServer(connectionString), ServiceLifetime.Singleton);
 
 var app = builder.Build();
 

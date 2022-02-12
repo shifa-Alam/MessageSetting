@@ -10,19 +10,22 @@ namespace MessageSetting.API.Controllers
     public class ContactController : ControllerBase
     {
         private readonly IContactService _service;
-        public ContactController( IContactService contactService)
+        private readonly IUserService _userService;
+        public ContactController(IContactService contactService, IUserService userService)
         {
             _service = contactService;
+            _userService = userService;
         }
+        #region Contact
         [HttpGet]
-        [Route("Get")]
-        public async Task<IActionResult> Get()
+        [Route("GetContactAsync")]
+        public async Task<IActionResult> GetContactAsync()
         {
             try
-            
+
             {
-               var result = _service.GetAsync();
-                return Ok(result.Result);
+                var result = await _service.GetAllWithChildAsync();
+                return Ok(result.ToList());
             }
             catch (Exception)
             {
@@ -31,6 +34,7 @@ namespace MessageSetting.API.Controllers
             }
 
         }
+
         [HttpPost]
         [Route("SaveAsync")]
         public async Task<IActionResult> SaveAsync([FromBody] Contact contact)
@@ -47,5 +51,48 @@ namespace MessageSetting.API.Controllers
             }
 
         }
+
+
+        [HttpPost]
+        [Route("UpdateRangeAsync")]
+        public async Task<IActionResult> UpdateRangeAsync([FromBody] IList<Object> contacts)
+        {
+            try
+            {
+                IList<Contact> conts = new List<Contact>();
+                foreach (var contact in contacts)
+                {
+                    conts.Add((Contact)contact);
+                }
+                var result = _service.UpdateRangeAsync(conts);
+                return Ok();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+        #endregion
+
+        #region User
+        [HttpGet]
+        [Route("GetUserAsync")]
+        public async Task<IActionResult> GetUserAsync()
+        {
+            try
+            {
+                var result = await _userService.GetAsync();
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+        #endregion
     }
 }
