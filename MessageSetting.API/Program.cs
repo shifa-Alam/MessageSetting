@@ -35,10 +35,12 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
 builder.Services.AddDbContext<MessageSettingDbContext>(
-    m => m.UseLazyLoadingProxies().UseSqlServer(connectionString), ServiceLifetime.Singleton);
+    m => m.UseLazyLoadingProxies().UseSqlServer(connectionString), ServiceLifetime.Transient);
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
 
 var app = builder.Build();
 

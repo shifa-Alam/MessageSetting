@@ -1,4 +1,6 @@
-﻿using MessageSetting.Application.Services;
+﻿using AutoMapper;
+using MessageSetting.API.Models;
+using MessageSetting.Application.Services;
 using MessageSetting.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +13,10 @@ namespace MessageSetting.API.Controllers
     {
         private readonly IContactService _service;
         private readonly IUserService _userService;
-        public ContactController(IContactService contactService, IUserService userService)
+        private readonly IMapper _mapper;
+        public ContactController(IMapper mapper, IContactService contactService, IUserService userService)
         {
+            _mapper = mapper;
             _service = contactService;
             _userService = userService;
         }
@@ -25,7 +29,8 @@ namespace MessageSetting.API.Controllers
 
             {
                 var result = await _service.GetAllWithChildAsync();
-                return Ok(result.ToList());
+                var contacts = _mapper.Map<List<Contact>, List<ContactInputModel>>(result.ToList());
+                return Ok(contacts);
             }
             catch (Exception)
             {
@@ -55,17 +60,15 @@ namespace MessageSetting.API.Controllers
 
         [HttpPost]
         [Route("UpdateRangeAsync")]
-        public async Task<IActionResult> UpdateRangeAsync([FromBody] IList<Object> contacts)
+        public async Task<IActionResult> UpdateRangeAsync([FromBody] IList<ContactInputModel> contacts)
         {
             try
             {
-                IList<Contact> conts = new List<Contact>();
-                foreach (var contact in contacts)
-                {
-                    conts.Add((Contact)contact);
-                }
-                var result = _service.UpdateRangeAsync(conts);
+                var mappedContacts = _mapper.Map<List<ContactInputModel>, List<Contact>>(contacts.ToList());
+                
+                var result = _service.UpdateRangeAsync(mappedContacts);
                 return Ok();
+
             }
             catch (Exception)
             {
@@ -84,7 +87,9 @@ namespace MessageSetting.API.Controllers
             try
             {
                 var result = await _userService.GetAsync();
-                return Ok(result);
+
+               var users =_mapper.Map<List<User>, List<UserInputModel>>(result.ToList());
+                return Ok(users);
             }
             catch (Exception)
             {
