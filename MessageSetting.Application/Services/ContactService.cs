@@ -12,7 +12,9 @@ namespace MessageSetting.Application.Services
     {
         private readonly IContactRepository _repo;
         private readonly IContactUserService _contactUserService;
-        public ContactService(IContactRepository contactRepository, IContactUserService contactUserService)
+
+        public ContactService(IContactRepository contactRepository,
+            IContactUserService contactUserService)
         {
             _repo = contactRepository;
             _contactUserService = contactUserService;
@@ -24,7 +26,6 @@ namespace MessageSetting.Application.Services
             {
                 if (entity is null) throw new ArgumentNullException(nameof(entity));
 
-                //_contactUserService.OnContactSave(entity);
                 _repo.AddAsync(entity);
                 _repo.SaveChanges();
 
@@ -42,7 +43,12 @@ namespace MessageSetting.Application.Services
         {
             try
             {
-                _repo.UpdateRangeAsync(contacts);
+
+                foreach (Contact contact in contacts)
+                {
+                    _repo.Update(contact);
+                }
+
                 _ = _repo.SaveChanges();
             }
             catch (Exception)
@@ -51,6 +57,14 @@ namespace MessageSetting.Application.Services
                 throw;
             }
         }
+
+
+
+
+
+
+
+
 
         //public async Task UpdateAsync(Contact entity)
         //{

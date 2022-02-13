@@ -8,7 +8,7 @@
         public long UserId { get; set; }
         public long UserType { get; set; }
 
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
         //public ContactInputModel Contact { get; set; }
         //public UserInputModel User { get; set; }
     }

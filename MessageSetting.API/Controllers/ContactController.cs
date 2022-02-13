@@ -11,16 +11,18 @@ namespace MessageSetting.API.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        private readonly IContactService _service;
+        private readonly IContactService _contactService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public ContactController(IMapper mapper, IContactService contactService, IUserService userService)
+        public ContactController(IMapper mapper, IContactService contactService,
+            IUserService userService)
         {
             _mapper = mapper;
-            _service = contactService;
+            _contactService = contactService;
             _userService = userService;
         }
         #region Contact
+
         [HttpGet]
         [Route("GetContactAsync")]
         public async Task<IActionResult> GetContactAsync()
@@ -28,7 +30,7 @@ namespace MessageSetting.API.Controllers
             try
 
             {
-                var result = await _service.GetAllWithChildAsync();
+                var result = await _contactService.GetAllWithChildAsync();
                 var contacts = _mapper.Map<List<Contact>, List<ContactInputModel>>(result.ToList());
                 return Ok(contacts);
             }
@@ -46,8 +48,8 @@ namespace MessageSetting.API.Controllers
         {
             try
             {
-                var result = _service.SaveAsync(contact);
-                return Ok(result.Result);
+                var result = await _contactService.SaveAsync(contact);
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -66,7 +68,7 @@ namespace MessageSetting.API.Controllers
             {
                 var mappedContacts = _mapper.Map<List<ContactInputModel>, List<Contact>>(contacts.ToList());
                 
-                var result = _service.UpdateRangeAsync(mappedContacts);
+                var result =  _contactService.UpdateRangeAsync(mappedContacts);
                 return Ok();
 
             }

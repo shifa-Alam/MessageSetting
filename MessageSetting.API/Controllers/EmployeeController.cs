@@ -21,8 +21,8 @@ namespace MessageSetting.API.Controllers
             try
             
             {
-               var result = _service.GetAsync();
-                return Ok(result.Result);
+               var result = await _service.GetAsync();
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -37,8 +37,8 @@ namespace MessageSetting.API.Controllers
         {
             try
             {
-                var result = _service.SaveAsync(employee);
-                return Ok(result.Result);
+                var result =  await _service.SaveAsync(employee);
+                return Ok(result);
             }
             catch (Exception)
             {

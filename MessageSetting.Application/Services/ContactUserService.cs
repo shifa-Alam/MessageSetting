@@ -26,9 +26,30 @@ namespace MessageSetting.Application.Services
             return await _contactUserRepository.GetAllAsync();
         }
 
+      
+        public void OnContactUpdate(Contact contact)
+        {
+          
+
+            try
+            {
+                if (contact is null)throw new ArgumentNullException(nameof(contact));
+                foreach (var item in contact.ContactUsers)
+                {
+                        _contactUserRepository.DeleteAsync(item);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         //public void OnContactSave(Contact entity)
         //{
-           
+
 
         //    try
         //    {

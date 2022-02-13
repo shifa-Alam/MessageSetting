@@ -11,7 +11,9 @@ namespace MessageSetting.Core.Repositories
     public interface IContactRepository : IRepository<Contact>
     {
         //custom operations here
-        void UpdateRangeAsync(IList<Contact> contacts);
+        public void UpdateRangeAsync(IEnumerable<Contact> entities);
+
+        public void Update(Contact entity);
 
         public IEnumerable<Contact> GetAllWithChild();
     }

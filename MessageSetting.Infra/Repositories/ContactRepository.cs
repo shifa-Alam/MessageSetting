@@ -13,26 +13,70 @@ namespace MessageSetting.Infra.Repositories
 {
     public class ContactRepository : Repository<Contact>, IContactRepository
     {
-        private readonly MessageSettingDbContext _messageSettingDbContext;
-        public ContactRepository(MessageSettingDbContext messageSettingDbContext) : base(messageSettingDbContext) 
+        public ContactRepository(MessageSettingDbContext messageSettingDbContext) :
+            base(messageSettingDbContext)
         {
-            _messageSettingDbContext = messageSettingDbContext;
         }
-
         public IEnumerable<Contact> GetAllWithChild()
         {
-            //Include(co => co.Employees).ThenInclude(emp => emp.Employee_Car)
-            // .Include(co => co.Employees).ThenInclude(emp => emp.Employee_Country)
-            // .FirstOrDefault(co => co.companyID == companyID)
-
-            var results = _messageSettingDbContext.Contacts.Include(e=>e.ContactUsers).ToList();
-            //_messageSettingDbContext.Users.Where(e=>e.Id).ToList();
-            return results;
+            var dbResult = _messageSettingDbContext.Contacts.Include(e=>e.ContactUsers).ToListAsync();
+            return dbResult.Result;
         }
 
-        public void UpdateRangeAsync(IList<Contact> contacts)
+        public void UpdateRangeAsync(IEnumerable<Contact> contacts)
         {
             _messageSettingDbContext.Contacts.UpdateRange(contacts);
         }
+
+
+
+
+
+        public void Update(Contact entity)
+        {
+            var existingEntity = _messageSettingDbContext.Contacts
+                .Where(p => p.Id == entity.Id)
+                .Include(p => p.ContactUsers)
+                .SingleOrDefault();
+
+            if (existingEntity != null)
+            {
+                // Update parent
+                _messageSettingDbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+
+                // Delete children
+                foreach (var existingChild in existingEntity.ContactUsers.ToList())
+                {
+                    if (!entity.ContactUsers.Any(c => c.Id == existingChild.Id))
+                        _messageSettingDbContext.ContactUsers.Remove(existingChild);
+                }
+
+                // Update and Insert children
+                foreach (var childModel in entity.ContactUsers)
+                {
+                    var existingChild = existingEntity.ContactUsers
+                        .Where(c => c.Id == childModel.Id && c.Id != default(int))
+                        .SingleOrDefault();
+
+                    if (existingChild != null)
+                        // Update child
+                        _messageSettingDbContext.Entry(existingChild).CurrentValues.SetValues(childModel);
+                    else
+                    {
+                        // Insert child
+                        var newChild = new ContactUser()
+                        {
+                            UserId = childModel.UserId,
+                            UserType = childModel.UserType
+                        };
+                        existingEntity.ContactUsers.Add(newChild);
+                    }
+                }
+            }
+        }
+
+
+
+
     }
 }
