@@ -13,8 +13,8 @@ namespace MessageSetting.Core.Repositories
         //custom operations here
         public void UpdateRangeAsync(IEnumerable<Contact> entities);
 
-        public void Update(Contact entity);
+        public void UpdateParentWithChild(Contact entity);
 
-        public IEnumerable<Contact> GetAllWithChild();
+        public IEnumerable<Contact> GetAllIncludeChild();
     }
 }

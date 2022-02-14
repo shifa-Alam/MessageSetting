@@ -17,7 +17,7 @@ namespace MessageSetting.Infra.Repositories
             base(messageSettingDbContext)
         {
         }
-        public IEnumerable<Contact> GetAllWithChild()
+        public IEnumerable<Contact> GetAllIncludeChild()
         {
             var dbResult = _messageSettingDbContext.Contacts.Include(e=>e.ContactUsers).ToListAsync();
             return dbResult.Result;
@@ -29,23 +29,20 @@ namespace MessageSetting.Infra.Repositories
         }
 
 
-
-
-
-        public void Update(Contact entity)
+        public void UpdateParentWithChild(Contact entity)
         {
-            var existingEntity = _messageSettingDbContext.Contacts
+            var existingParent = _messageSettingDbContext.Contacts
                 .Where(p => p.Id == entity.Id)
                 .Include(p => p.ContactUsers)
                 .SingleOrDefault();
 
-            if (existingEntity != null)
+            if (existingParent != null)
             {
                 // Update parent
-                _messageSettingDbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+                _messageSettingDbContext.Entry(existingParent).CurrentValues.SetValues(entity);
 
                 // Delete children
-                foreach (var existingChild in existingEntity.ContactUsers.ToList())
+                foreach (var existingChild in existingParent.ContactUsers.ToList())
                 {
                     if (!entity.ContactUsers.Any(c => c.Id == existingChild.Id))
                         _messageSettingDbContext.ContactUsers.Remove(existingChild);
@@ -54,7 +51,7 @@ namespace MessageSetting.Infra.Repositories
                 // Update and Insert children
                 foreach (var childModel in entity.ContactUsers)
                 {
-                    var existingChild = existingEntity.ContactUsers
+                    var existingChild = existingParent.ContactUsers
                         .Where(c => c.Id == childModel.Id && c.Id != default(int))
                         .SingleOrDefault();
 
@@ -69,16 +66,12 @@ namespace MessageSetting.Infra.Repositories
                             UserId = childModel.UserId,
                             UserType = childModel.UserType
                         };
-                        existingEntity.ContactUsers.Add(newChild);
+                        existingParent.ContactUsers.Add(newChild);
                     }
                 }
             }
 
             _messageSettingDbContext.SaveChanges();
         }
-
-
-
-
     }
 }

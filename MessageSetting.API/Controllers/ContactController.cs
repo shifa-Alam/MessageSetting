@@ -14,7 +14,9 @@ namespace MessageSetting.API.Controllers
         private readonly IContactService _contactService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public ContactController(IMapper mapper, IContactService contactService,
+        public ContactController(
+            IMapper mapper,
+            IContactService contactService,
             IUserService userService)
         {
             _mapper = mapper;
@@ -69,16 +71,10 @@ namespace MessageSetting.API.Controllers
             try
             {
 
-                //foreach (var contact in contacts)
-                //{
-                //    if (contact.PrimaryUserId > 0)
-                //        contact.ContactUsers.Add(new ContactUserModel { UserId = (long)contact.PrimaryUserId, UserType = 1 });
-
-                //}
-
                 var mappedContacts = _mapper.Map<List<ContactModel>, List<Contact>>(contacts.ToList());
 
                 _contactService.UpdateRange(mappedContacts);
+
                 return Ok();
 
             }
@@ -92,6 +88,7 @@ namespace MessageSetting.API.Controllers
         #endregion
 
         #region User
+
         [HttpGet]
         [Route("GetUserAsync")]
         public async Task<IActionResult> GetUserAsync()
@@ -112,6 +109,7 @@ namespace MessageSetting.API.Controllers
             }
 
         }
+
         #endregion
     }
 }

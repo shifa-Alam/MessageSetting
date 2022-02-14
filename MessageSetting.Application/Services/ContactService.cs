@@ -43,13 +43,10 @@ namespace MessageSetting.Application.Services
         {
             try
             {
-
                 foreach (Contact contact in contacts)
                 {
-                    _repo.Update(contact);
+                    _repo.UpdateParentWithChild(contact);
                 }
-
-                //_repo.SaveChanges();
             }
             catch (Exception)
             {
@@ -57,6 +54,20 @@ namespace MessageSetting.Application.Services
                 throw;
             }
         }
+
+
+        public async Task<IEnumerable<Contact>> GetAsync()
+        {
+
+            return await _repo.GetAllAsync();
+
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllWithChildAsync()
+        {
+            return _repo.GetAllIncludeChild();
+        }
+
 
 
 
@@ -78,17 +89,5 @@ namespace MessageSetting.Application.Services
         //{
         //    return await _contactRepository.GetByIdAsync(id); ;
         //}
-
-        public async Task<IEnumerable<Contact>> GetAsync()
-        {
-
-            return await _repo.GetAllAsync();
-
-        }
-
-        public async Task<IEnumerable<Contact>> GetAllWithChildAsync()
-        {
-            return _repo.GetAllWithChild();
-        }
     }
 }
