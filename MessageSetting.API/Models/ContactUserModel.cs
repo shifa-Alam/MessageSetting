@@ -1,6 +1,6 @@
 ﻿namespace MessageSetting.API.Models
 {
-    public class ContactUserInputModel
+    public class ContactUserModel
     {
 
         public long Id { get; set; }

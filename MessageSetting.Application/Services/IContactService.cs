@@ -15,6 +15,6 @@ namespace MessageSetting.Application.Services
         //public Task DeleteAsync(Contact entity);
         public Task<IEnumerable<Contact>> GetAsync();
         public Task<IEnumerable<Contact>> GetAllWithChildAsync();
-        public Task UpdateRangeAsync(IList<Contact> contacts);
+        public void UpdateRange(IList<Contact> contacts);
     }
 }

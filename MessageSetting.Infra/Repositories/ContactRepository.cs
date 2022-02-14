@@ -73,6 +73,8 @@ namespace MessageSetting.Infra.Repositories
                     }
                 }
             }
+
+            _messageSettingDbContext.SaveChanges();
         }
 
 

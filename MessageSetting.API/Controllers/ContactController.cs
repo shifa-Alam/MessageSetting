@@ -31,7 +31,9 @@ namespace MessageSetting.API.Controllers
 
             {
                 var result = await _contactService.GetAllWithChildAsync();
-                var contacts = _mapper.Map<List<Contact>, List<ContactInputModel>>(result.ToList());
+                var contacts = _mapper.Map<List<Contact>, List<ContactModel>>(result.ToList());
+                //contacts.ForEach(contact => { contact.ContactUsers.Select(e => e.UserType != 1); });
+
                 return Ok(contacts);
             }
             catch (Exception)
@@ -62,13 +64,21 @@ namespace MessageSetting.API.Controllers
 
         [HttpPost]
         [Route("UpdateRangeAsync")]
-        public async Task<IActionResult> UpdateRangeAsync([FromBody] IList<ContactInputModel> contacts)
+        public async Task<IActionResult> UpdateRangeAsync([FromBody] IList<ContactModel> contacts)
         {
             try
             {
-                var mappedContacts = _mapper.Map<List<ContactInputModel>, List<Contact>>(contacts.ToList());
-                
-                var result =  _contactService.UpdateRangeAsync(mappedContacts);
+
+                foreach (var contact in contacts)
+                {
+                    if (contact.PrimaryUserId > 0)
+                        contact.ContactUsers.Add(new ContactUserModel { UserId = (long)contact.PrimaryUserId, UserType = 1 });
+
+                }
+
+                var mappedContacts = _mapper.Map<List<ContactModel>, List<Contact>>(contacts.ToList());
+
+                _contactService.UpdateRange(mappedContacts);
                 return Ok();
 
             }
@@ -90,7 +100,9 @@ namespace MessageSetting.API.Controllers
             {
                 var result = await _userService.GetAsync();
 
-               var users =_mapper.Map<List<User>, List<UserInputModel>>(result.ToList());
+                var users = _mapper.Map<List<User>, List<UserModel>>(result.ToList());
+
+
                 return Ok(users);
             }
             catch (Exception)

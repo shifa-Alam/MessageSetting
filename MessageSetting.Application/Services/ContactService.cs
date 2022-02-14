@@ -39,7 +39,7 @@ namespace MessageSetting.Application.Services
         }
 
 
-        public async Task UpdateRangeAsync(IList<Contact> contacts)
+        public  void UpdateRange(IList<Contact> contacts)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace MessageSetting.Application.Services
                     _repo.Update(contact);
                 }
 
-                _ = _repo.SaveChanges();
+                //_repo.SaveChanges();
             }
             catch (Exception)
             {
