@@ -69,12 +69,12 @@ namespace MessageSetting.API.Controllers
             try
             {
 
-                foreach (var contact in contacts)
-                {
-                    if (contact.PrimaryUserId > 0)
-                        contact.ContactUsers.Add(new ContactUserModel { UserId = (long)contact.PrimaryUserId, UserType = 1 });
+                //foreach (var contact in contacts)
+                //{
+                //    if (contact.PrimaryUserId > 0)
+                //        contact.ContactUsers.Add(new ContactUserModel { UserId = (long)contact.PrimaryUserId, UserType = 1 });
 
-                }
+                //}
 
                 var mappedContacts = _mapper.Map<List<ContactModel>, List<Contact>>(contacts.ToList());
 
