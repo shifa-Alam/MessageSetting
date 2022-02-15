@@ -14,10 +14,7 @@ namespace MessageSetting.API.Controllers
         private readonly IContactService _contactService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public ContactController(
-            IMapper mapper,
-            IContactService contactService,
-            IUserService userService)
+        public ContactController(IMapper mapper,IContactService contactService,IUserService userService)
         {
             _mapper = mapper;
             _contactService = contactService;
@@ -34,8 +31,7 @@ namespace MessageSetting.API.Controllers
             {
                 var result = await _contactService.GetAllWithChildAsync();
                 var contacts = _mapper.Map<List<Contact>, List<ContactModel>>(result.ToList());
-                //contacts.ForEach(contact => { contact.ContactUsers.Select(e => e.UserType != 1); });
-
+               
                 return Ok(contacts);
             }
             catch (Exception)
